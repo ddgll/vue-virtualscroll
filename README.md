@@ -6,6 +6,10 @@ Vuejs library for virtual scrolling
 npm i vue-virtualscroll
 ```
 
+```javascript
+import VueVirtualScroll from 'vue-virtualscroll'
+```
+
 ```html
 <vue-virtual-scroll :height="30" @reachTop="reset()" @reachBottom="loadMore()">
 	<div v-for="(item, index) of data" style="height: 30px">{{ index }} - {{ item.name }}</div>
