@@ -5,6 +5,7 @@
 			<div v-for="(item, index) of data" :key="index" style="height: 30px">{{ index }} - {{ item.name }}</div>
 		</vue-virtual-scroll>
     <select @change="setData($event.target.value)">
+      <option>- Load data -</option>
       <option value="data.json">Data</option>
       <option value="tinydata.json">Tiny</option>
       <option value="bigdata.json">Big</option>
@@ -24,9 +25,9 @@ export default {
     }
   },
   mounted(){
-    axios.get('/dev/data.json').then((data) => {
+    /*axios.get('/dev/data.json').then((data) => {
       this.data = data.data
-    })
+    })*/
   },
   methods: {
     setData(value){
