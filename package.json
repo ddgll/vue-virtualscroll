@@ -1,6 +1,6 @@
 {
   "name": "vue-virtualscroll",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A vue (2.x) component for virtualscroll list.",
   "main": "dist/index.js",
   "files": [
