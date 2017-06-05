@@ -1,6 +1,6 @@
 {
   "name": "vue-virtualscroll",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A vue (2.x) component for virtualscroll list.",
   "main": "dist/index.js",
   "files": [
@@ -24,8 +24,11 @@
     "type": "git",
     "url": "https://github.com/ddgll/vue-virtualscroll"
   },
-  "author": "ddlgl <grilldotcom@gmail.com>",
+  "author": "ddgll <grilldotcom@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "vue": "^2.3.3"
+  },
   "devDependencies": {
     "axios": "^0.16.1",
     "babel-core": "^6.24.1",
@@ -51,7 +54,6 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "uglifyjs-webpack-plugin": "^0.4.3",
-    "vue": "^2.3.3",
     "vue-loader": "^12.2.1",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.3",
