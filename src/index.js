@@ -41,7 +41,7 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 		},
 
 		_getVNodes () {
-			if(this.initialized){
+			if(this.initialized && this.$slots.default){
 				return this.$slots.default.slice(this.offset, this.offset + this.count)
 			}else{
 				return []
@@ -92,7 +92,7 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 
 	render (createElement) {
 		if(!this.initialized || !this.height) return createElement('div', {})
-		if(this.initialized && this.total != this.$slots.default.length) this.setData()
+		if(this.initialized && this.total != (this.$slots.default ? this.$slots.default.length : 0)) this.setData()
 		return createElement('div', 
 			{
 				'on': {
