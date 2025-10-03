@@ -1,9 +1,12 @@
-var path = require('path')
-var webpack = require('webpack')
-var ExtractTextPlugin = require("extract-text-webpack-plugin")
-var UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
+  mode: isProduction ? 'production' : 'development',
   entry: './dev/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -15,21 +18,22 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: {
-          loaders: {
-
-          }
-        }
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
+        options: {
+          babelrc: false,
+          presets: ['@babel/preset-env']
+        }
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
-        exclude: /node_modules/
+        use: [
+          isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader'
+        ],
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -40,53 +44,48 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new VueLoaderPlugin()
+  ],
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.common.js'
+      'vue$': 'vue/dist/vue.esm-bundler.js'
     }
   },
   devServer: {
-    contentBase: path.join(__dirname, "/"),
+    static: {
+      directory: path.join(__dirname, "/"),
+    },
     historyApiFallback: true,
-    noInfo: true
+    watchFiles: ['src/**/*', 'dev/**/*'],
   },
-  devtool: '#source-map'
-}
+  devtool: 'source-map'
+};
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports.entry = './src/index.js'
+if (isProduction) {
+  module.exports.entry = './src/index.js';
 
   module.exports.externals = {
     "vue": "vue"
-  }
+  };
 
   module.exports.output = {
     path: path.resolve(__dirname, './dist'),
     filename: 'index.js',
-    library: 'VueVirtualScroll',
-    libraryTarget: 'umd'
-  }
-  module.exports.devtool = '#source-map'
-  module.exports.module.rules[0].options.loaders = {
-    css: ExtractTextPlugin.extract({
-      use: 'css-loader',
-      fallback: 'vue-style-loader' // <- this is a dep of vue-loader, so no need to explicitly install if using npm3
+    library: {
+        name: 'VueVirtualScroll',
+        type: 'umd',
+        umdNamedDefine: true,
+    },
+    globalObject: 'this',
+  };
+
+  module.exports.plugins.push(
+    new MiniCssExtractPlugin({
+      filename: 'style.css'
     }),
-    less: ExtractTextPlugin.extract({
-      use: 'css-loader!less-loader',
-      fallback: 'vue-style-loader'
-    })
-  }
-  module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    }),
-    new ExtractTextPlugin("style.css"),
-    new UglifyJSPlugin()
-  ])
+      'process.env.NODE_ENV': JSON.stringify('production')
+    })
+  );
 }
