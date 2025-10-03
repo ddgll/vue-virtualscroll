@@ -1,7 +1,7 @@
-import Vue from 'vue'
+import { h, defineComponent } from 'vue';
 
-const VueVirtualScroll = Vue.component('vue-virtualscroll', {
-
+const VueVirtualScroll = defineComponent({
+	name: 'vue-virtualscroll',
 	props: {
 		height: {
 			type: Number,
@@ -42,7 +42,7 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 
 		_getVNodes () {
 			if(this.initialized && this.$slots.default){
-				return this.$slots.default.slice(this.offset, this.offset + this.count)
+				return this.$slots.default().slice(this.offset, this.offset + this.count)
 			}else{
 				return []
 			}
@@ -79,25 +79,28 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 			this.viewHeight = this._getElemInfo(this.$el).height
 			this.nb = Math.ceil(this.viewHeight / this.height)
 			this.count = this.nb + Math.round(this.nb / 2)
-			this.total = this.$slots.default ? this.$slots.default.length : 0
+			this.total = this.$slots.default ? this.$slots.default().length : 0
 			if(this.total < this.count) this.count = this.total
 			this.scrollHeight = this.height * (this.total - this.count)
 			this.$el.scrollTop = 0
 		}
 	},
 
-	updated () {
-		if(!this.initialized) this.init()
+	mounted () {
+		this.init()
 	},
 
-	render (createElement) {
-		if(!this.initialized || !this.height) return createElement('div', {})
-		if(this.initialized && this.total != (this.$slots.default ? this.$slots.default.length : 0)) this.setData()
-		return createElement('div', 
+	updated() {
+		if (this.total !== (this.$slots.default ? this.$slots.default().length : 0)) {
+			this.setData();
+		}
+	},
+
+	render () {
+		if(!this.initialized || !this.height) return h('div', {})
+		return h('div',
 			{
-				'on': {
-					'scroll': this.scroll
-				},
+				'onScroll': this.scroll,
 				'style': {
 					'overflow-y': 'auto',
 					'height': this.viewHeight + 'px',
@@ -105,7 +108,7 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 				}
 			},
 			[
-				createElement('div', 
+				h('div',
 					{
 						'style': {
 							'padding-top': this.paddingTop + 'px',
@@ -115,6 +118,6 @@ const VueVirtualScroll = Vue.component('vue-virtualscroll', {
 			]
 		)
 	}
-})
+});
 
-module.exports = VueVirtualScroll
+export default VueVirtualScroll;
